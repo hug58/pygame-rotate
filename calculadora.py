@@ -55,7 +55,7 @@ class Aplication():
 		#for i in range(len(self.bottons)):
 		#	self.bottons[i].config(command = lambda:self.mostrar(self.simbolos[i]))
 
-
+		#No sé porqué pero me da errores usando un ciclo for, prueba lo de arriba para comprobar
 		self.bottons[0].config(command = lambda:self.mostrar(self.simbolos[0]))
 		self.bottons[1].config(command = lambda:self.mostrar(self.simbolos[1]))
 		self.bottons[2].config(command = lambda:self.mostrar(self.simbolos[2]))
