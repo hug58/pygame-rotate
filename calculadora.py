@@ -79,6 +79,7 @@ class Aplication():
 		else:
 			NumPantalla.pantalla.set(num)
 
+	#Ya no lo uso pero casi bien como el nuevo
 	def operacion(self):
 		resultado = 0
 		num1 = 0
