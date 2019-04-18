@@ -1,22 +1,47 @@
 import socket
+import threading as th 
+import json 
 
-def main():
-    s = socket.socket()
-    s.connect(("localhost",6000))
-    #s.setblocking(False)
+class Client:
+    
+    def __init__(self):
+        self.s = socket.socket()
+        self.s.connect(('localhost',6000))        
 
-    while True:
+        rc = th.Thread(target = self.recevie, daemon = True)
+        rc.start()
 
-        data = input(">")
-        s.send(bytes(data,"utf-8"))
+        self.msg_input()
 
-        if data == "exit": break
-        data_server = s.recv(1024)
-        if data_server:print(f"Mensaje Enviado del servidor: {data_server.decode('utf-8')}")
+
+    def msg_input(self):
+
+        while 1:
+
+            data = input("-> ")
+
+            if data == "exit":
+                self.s.close()
+                break
+
+            data = json.dumps(data)
             
+            self.s.send(bytes(data,"utf-8"))
+           
 
 
-    s.close()
+    def recevie(self):
+
+        while 1:
+
+            try:
+                data_server = self.s.recv(1024)
+                if data_server:
+                    print("Mensaje Enviado del servidor: {}".format(json.loads(data_server)))
+
+            except:
+                pass
 
 if __name__ == "__main__":
-    main()
+
+    client = Client()

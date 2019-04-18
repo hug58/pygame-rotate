@@ -1,35 +1,107 @@
 import socket
 import threading as th
+import json
+import sys 
 
 
-s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
-s.bind(("localhost",6000))
-s.listen(2)
+from time import sleep
 
+class Server:
 
-def main(conn,addr):
-    
-    #s.setblocking(False)
-    
-    print( f"Conexión establecida con: {addr}")
+    def __init__(self):
 
-    while True:
+        self.clients = []
 
-        data = conn.recv(1024)
-        if data:
-            print("")
-            data = data.decode("utf-8")
-            print(data)
-            print( f"Reevio del msj al cliente: {addr}")
-            conn.sendall(bytes(data,"utf-8"))
-            print(bytes(data,"utf-8"))
-            if data == "exit":
+        self.s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        self.s.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+        self.s.bind(("localhost",6000))
+        self.s.listen(10)
+        self.s.setblocking(False)
+
+        ac = th.Thread(target= self.accept_client,daemon= True)
+        ac.start()
+
+        rc = th.Thread(target = self.recive,daemon = True)
+        rc.start()
+
+        while 1:
+            data = input(">")
+            if data == 'exit':
+
+                self.s.close()
+                sys.exit()
                 break
 
-    s.close()
+    def recive(self):
+    
+        while True:
+
+            if len(self.clients) > 0:
+
+
+                for conn,addr in self.clients:            
+
+                    try:
+                        data =  conn.recv(1024)
+
+                        if data:
+                            
+                            print("")
+                            data = json.loads(data)
+                            
+                            print("Msj de {addr} :{data}".format(addr = addr,data = data))
+                            
+                            if data == "exit": 
+                                break
+                            
+                            self.msg_client(data,conn)                        
+
+
+                    except:
+                        pass
+
+        #self.s.close()
+
+    def msg_client(self,data,client):
+            
+
+        for conn,addr in self.clients:
+
+
+            try:
+
+                data = json.dumps(data)
+                msg_decode = bytes(data,"utf-8")
+                    
+                if client != conn:
+                	conn.send(msg_decode)
+
+            except:
+                self.clients.remove(client)
+
+    def accept_client(self):
+
+        print("Esperando conexión...")
+
+        while 1:
+
+            try:
+                if len(self.clients) < 10:
+
+                    conn,addr = self.s.accept()
+                    conn.setblocking(False)
+                    print( "Conexión establecida con: {}".format(addr))
+                    self.clients.append((conn,addr))
+
+                else:
+                    break
+
+            except:
+                pass
+
+
+
+
 
 if __name__ == "__main__":
-    while 1:
-        conn,addr = s.accept()
-        th.Thread(target = main, args = (conn,addr)).start()
+    server = Server()
