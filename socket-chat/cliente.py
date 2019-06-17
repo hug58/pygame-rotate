@@ -4,9 +4,9 @@ import json
 
 class Client:
     
-    def __init__(self):
+    def __init__(self,ip,port):
         self.s = socket.socket()
-        self.s.connect(('localhost',6000))        
+        self.s.connect((ip,port))        
 
         rc = th.Thread(target = self.recevie, daemon = True)
         rc.start()
@@ -44,4 +44,9 @@ class Client:
 
 if __name__ == "__main__":
 
-    client = Client()
+    host_ip =  input('INTRODUCE IP DEL SERVIDOR: ')
+    host_port = input('INTRODUCE PUERTO DEL SERVIDOR: ')
+
+    host_port = int(host_port)
+
+    client = Client(host_ip,host_port)

@@ -7,20 +7,19 @@ import time
 import sqlite3
 
 
-#meConexion = sqlite3.connect('Users')
-#meCursor = meConexion.cursor()
+meConexion = sqlite3.connect('users')
+meCursor = meConexion.cursor()
 
 # ----------------
 
-# miCursor.execute( '''CREATE TABLE PRODUCTOS (
-# ID INTEGER PRIMARY KEY AUTOINCREMENT,
-# NAME VARCHAR(50) UNIQUE,
-# EMAIL VARCHAR(50) UNIQUE,
-# PASSWORD VARCHAR(50) UNIQUE,
-# GENDER INTEGER,
-# ACTIVE BOOL)''')
-
-# ------------------
+# meCursor.execute( '''CREATE TABLE USERS (
+# 					ID INTEGER PRIMARY KEY AUTOINCREMENT,
+# 					NAME VARCHAR(50) UNIQUE,
+# 					EMAIL VARCHAR(50) UNIQUE,
+# 					PASSWORD VARCHAR(50) UNIQUE,
+# 					GENDER INTEGER,
+# 					ACTIVE BOOL)''')
+# # ------------------
 
 root = Tk()
 root.resizable(width=False, height=False)
@@ -30,6 +29,15 @@ root.title('User Register')
 GREEN = '#22dd99'
 RED = '#e63569'
 BG = 'white'
+
+
+
+#-------Test query select email --------
+#EMAIL = 'hugomontaez@gmail.com'
+#query = f"""SELECT EMAIL FROM USERS WHERE EMAIL = '{EMAIL}' """
+#meCursor.execute(query)
+
+
 
 class Aplication():
 	def __init__(self):	
@@ -123,16 +131,17 @@ class Aplication():
 		#-------Envio y comprobar datos--------
 
 		botonSend = Button(miform,text = 'Send',command = self.enviar,bg = GREEN)
-		botonExit = Button(miform,text = 'Exit',command = quit, bg = RED)
+		botonExit = Button(miform,text = 'Exit',command = self.quit, bg = RED)
 
 		botonSend.grid(row = 8,column = 2,sticky = 'w',padx = 10,pady = 10)
 		botonExit.grid(row = 8,column = 0,sticky = 'w',padx = 10,pady = 10)
 
-		root.mainloop()
+		self.update()
 
 
 	def infoAdicional(self):
 		messagebox.showinfo('Register User', 'Developer Hug58 \nTwitter: hug588 \nGithub: hug58')
+
 
 	def comprobarInfo(self):
 		enviar = 1
@@ -142,7 +151,7 @@ class Aplication():
 		correo = self.meEmail.get() 		
 		gender = self.gender.get()
 
-		infoUsuario = (nombre,password,correo,gender,self.date)
+		infoUsuario = (nombre,correo,password,gender,1,self.date)
 
 		if  nombre == '':
 			enviar = 0
@@ -168,16 +177,47 @@ class Aplication():
 		else:
 			return 0
 
+
+	def comprobar_db(self,email):
+		meCursor.execute(f"""SELECT EMAIL FROM USERS WHERE EMAIL == '{email}'""") 
+		respuesta = meCursor.fetchall()
+
+		if respuesta:
+			return 0
+		else:
+			return 1 
+
+
 	def enviar(self):
 		infoUsuario = self.comprobarInfo()
 
 		if  infoUsuario != 0:
-			self.alertNombre.config(bg = GREEN,text = 'Done!',width = 12)
-		else:
+			email = infoUsuario[1]
+	
+			if self.comprobar_db(email) == 1:
+				self.insert(infoUsuario)
+				self.alertNombre.config(bg = GREEN,text = 'Done!',width = 12)
+			else:
+				self.alertNombre.config(bg = RED,text = '¡Email ya usado!',width = 12)
 
+		else:
 			self.alertNombre.config(bg = RED,text = '¡Incorrect!',width = 12) 
 
+	
+	def insert(self,values):
+		meCursor.execute("""INSERT INTO USERS VALUES(NULL,?,?,?,?,?,?)""",values)
+		meConexion.commit()
+
+
+	def quit(self):
+		meConexion.close()
+		quit()
+
+
+	def update(self):
+		root.mainloop()
 
 if __name__ == '__main__':
 	app = Aplication()
+
 	
