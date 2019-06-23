@@ -104,7 +104,7 @@ class Aplication():
 		#--------RADIOBUTTON-------
 		genderM = Radiobutton(miFrame,text = 'Male', variable = self.gender,value = 1)
 		genderF = Radiobutton(miFrame,text = 'Female', variable = self.gender, value = 2)
-		genderE = Radiobutton(miFrame,text = 'No-bin', variable = self.gender, value = 3)
+		genderE = Radiobutton(miFrame,text = 'No binary', variable = self.gender, value = 3)
 
 		genderM.config(bg = BG)		
 		genderF.config(bg = BG)		
@@ -123,8 +123,8 @@ class Aplication():
 
 		#-----------Alert---------
 
-		self.alertNombre = Label(miform)
-		self.alertNombre.config(bg = BG,width = 12)
+		self.alertNombre = Label(miFrame)
+		self.alertNombre.config(bg = BG)
 		self.alertNombre.grid(row = 8 ,column = 1,sticky = 'w',padx = 10,pady = 10)
 
 
@@ -133,8 +133,8 @@ class Aplication():
 		botonSend = Button(miform,text = 'Send',command = self.enviar,bg = GREEN)
 		botonExit = Button(miform,text = 'Exit',command = self.quit, bg = RED)
 
-		botonSend.grid(row = 8,column = 2,sticky = 'w',padx = 10,pady = 10)
-		botonExit.grid(row = 8,column = 0,sticky = 'w',padx = 10,pady = 10)
+		botonSend.grid(row = 8,column = 2,sticky = 'w',padx = 40,pady = 10)
+		botonExit.grid(row = 8,column = 0,sticky = 'w',padx = 40,pady = 10)
 
 		self.update()
 
@@ -196,12 +196,12 @@ class Aplication():
 	
 			if self.comprobar_db(email) == 1:
 				self.insert(infoUsuario)
-				self.alertNombre.config(bg = GREEN,text = 'Done!',width = 12)
+				self.alertNombre.config(bg = GREEN,text = 'Registered')
 			else:
-				self.alertNombre.config(bg = RED,text = '¡Email ya usado!',width = 12)
+				self.alertNombre.config(bg = RED,text = 'Email already used')
 
 		else:
-			self.alertNombre.config(bg = RED,text = '¡Incorrect!',width = 12) 
+			self.alertNombre.config(bg = RED,text = 'Incomplete data') 
 
 	
 	def insert(self,values):
